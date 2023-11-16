@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Progress Tracker</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    #progress-bar {
+      width: 60%;
+      height: 30px;
+      background-color: #eee;
+      margin-top: 20px;
+      position: relative;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    #progress-fill {
+      height: 100%;
+      background-color: #4caf50;
+      transition: width 0.3s ease-in-out;
+    }
+
+    .task-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      background-color: #fff;
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .task-input {
+      width: 200px;
+      margin-right: 10px;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+
+    .add-button {
+      cursor: pointer;
+      background-color: #4caf50;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Progression Bar</h1>
+
+  <div id="progress-bar">
+    <div id="progress-fill"></div>
+  </div>
+
+  <div id="tasks-container"></div>
+
+  <script>
+    let totalWeightage = 0;
+
+    function addTask() {
+      const taskInput = document.getElementById('task-input');
+      const weightageInput = document.getElementById('weightage-input');
+
+      // Check if total weightage exceeds 100%
+      if (totalWeightage + parseInt(weightageInput.value) > 100) {
+        alert('Total weightage cannot exceed 100%');
+        return;
+      }
+
+      const taskContainer = document.getElementById('tasks-container');
+      const taskDiv = document.createElement('div');
+      taskDiv.classList.add('task-container');
+
+      const taskText = document.createElement('span');
+      taskText.textContent = `${taskInput.value} ${weightageInput.value}% weightage`;
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.addEventListener('change', updateProgressBar);
+
+      taskDiv.appendChild(taskText);
+      taskDiv.appendChild(checkbox);
+      taskContainer.appendChild(taskDiv);
+
+      totalWeightage += parseInt(weightageInput.value);
+      updateProgressBar();
+
+      // Clear input fields
+      taskInput.value = '';
+      weightageInput.value = '';
+    }
+
+    function updateProgressBar() {
+      const progressBar = document.getElementById('progress-fill');
+      const tasks = document.querySelectorAll('.task-container input[type="checkbox"]:checked');
+      const completedWeightage = Array.from(tasks).reduce((sum, task) => {
+        const weightage = parseInt(task.parentNode.textContent.split(' ')[1]);
+        return sum + weightage;
+      }, 0);
+
+      const percentage = (completedWeightage / 100) * 100;
+      progressBar.style.width = `${percentage}%`;
+    }
+  </script>
+
+  <div>
+    <input id="task-input" class="task-input" type="text" placeholder="Task details">
+    <input id="weightage-input" type="number" placeholder="Weightage (%)">
+    <button class="add-button" onclick="addTask()">Add Task</button>
+  </div>
+
+</body>
+</html>
